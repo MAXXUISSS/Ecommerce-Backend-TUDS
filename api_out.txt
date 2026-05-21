@@ -1,0 +1,54 @@
+Usando la configuración de inicio de src\ECommerce.Api\Properties\launchSettings.json...
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5047
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\Proyectos web\Backend\Ecommerce\src\ECommerce.Api
+warn: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3]
+      Failed to determine the https port for redirect.
+fail: ECommerce.Api.Middleware.ApiExceptionHandler[0]
+      Error no controlado: Stock insuficiente: se solicitaron 99 unidades pero solo hay 8 disponibles.
+      ECommerce.Domain.Exceptions.OutOfStockException: Stock insuficiente: se solicitaron 99 unidades pero solo hay 8 disponibles.
+         at ECommerce.Domain.Entities.Product.DiscountStock(Int32 quantity) in D:\Proyectos web\Backend\Ecommerce\src\ECommerce.Domain\Entities\Product.cs:line 74
+         at ECommerce.Domain.Entities.Order.AddItem(Product product, Int32 quantity) in D:\Proyectos web\Backend\Ecommerce\src\ECommerce.Domain\Entities\Order.cs:line 31
+         at ECommerce.Application.UseCases.Orders.PlaceOrderUseCase.ExecuteAsync(Guid userId, List`1 lines, CancellationToken ct) in D:\Proyectos web\Backend\Ecommerce\src\ECommerce.Application\UseCases\Orders\PlaceOrderUseCase.cs:line 31
+         at ECommerce.Api.Controllers.OrdersController.Place(PlaceOrderRequest request, CancellationToken ct) in D:\Proyectos web\Backend\Ecommerce\src\ECommerce.Api\Controllers\OrdersController.cs:line 25
+         at lambda_method95(Closure, Object)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+      --- End of stack trace from previous location ---
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+         at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+         at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+         at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+         at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+         at ECommerce.Api.Middleware.ApiExceptionHandler.InvokeAsync(HttpContext context) in D:\Proyectos web\Backend\Ecommerce\src\ECommerce.Api\Middleware\ApiExceptionHandler.cs:line 11
+fail: ECommerce.Api.Middleware.ApiExceptionHandler[0]
+      Error no controlado: Categoría con id '3fa85f64-5717-4562-b3fc-2c963f66afa6' no fue encontrado.
+      ECommerce.Domain.Exceptions.ResourceNotFoundException: Categoría con id '3fa85f64-5717-4562-b3fc-2c963f66afa6' no fue encontrado.
+         at ECommerce.Api.Controllers.ProductsController.Create(NewProductRequest request, CancellationToken ct) in D:\Proyectos web\Backend\Ecommerce\src\ECommerce.Api\Controllers\ProductsController.cs:line 58
+         at lambda_method395(Closure, Object)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+      --- End of stack trace from previous location ---
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+         at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+         at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+         at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+         at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+         at ECommerce.Api.Middleware.ApiExceptionHandler.InvokeAsync(HttpContext context) in D:\Proyectos web\Backend\Ecommerce\src\ECommerce.Api\Middleware\ApiExceptionHandler.cs:line 11
