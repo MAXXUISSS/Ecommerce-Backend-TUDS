@@ -1,8 +1,6 @@
 using ECommerce.Api.DTOs;
 using ECommerce.Api.Mappers;
-using ECommerce.Application.Interfaces;
-using ECommerce.Domain.Entities;
-using ECommerce.Domain.Exceptions;
+using ECommerce.Application.UseCases.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,12 +8,19 @@ namespace ECommerce.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductsController(IProductRepository productRepository, ICategoryRepository categoryRepository) : ControllerBase
+public class ProductsController(
+    GetAllProductsUseCase getAllProductsUseCase,
+    GetPagedProductsUseCase getPagedProductsUseCase,
+    SearchProductsUseCase searchProductsUseCase,
+    GetProductByIdUseCase getProductByIdUseCase,
+    CreateProductUseCase createProductUseCase,
+    UpdateProductUseCase updateProductUseCase,
+    DeleteProductUseCase deleteProductUseCase) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProductResponse>>> GetAll(CancellationToken ct)
     {
-        var products = await productRepository.GetAllAsync(ct);
+        var products = await getAllProductsUseCase.ExecuteAsync(ct);
         return Ok(products.Select(ProductMapper.ToResponse));
     }
 
@@ -25,27 +30,21 @@ public class ProductsController(IProductRepository productRepository, ICategoryR
         [FromQuery] int pageSize = 10,
         CancellationToken ct = default)
     {
-        var paged = await productRepository.GetPagedAsync(page, pageSize, ct);
+        var paged = await getPagedProductsUseCase.ExecuteAsync(page, pageSize, ct);
         return Ok(ProductMapper.ToPagedResult(paged));
     }
 
     [HttpGet("search")]
     public async Task<ActionResult<IEnumerable<ProductResponse>>> Search([FromQuery] string term, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(term))
-            return BadRequest(new { message = "El término de búsqueda es requerido." });
-
-        var products = await productRepository.SearchByNameAsync(term, ct);
+        var products = await searchProductsUseCase.ExecuteAsync(term, ct);
         return Ok(products.Select(ProductMapper.ToResponse));
     }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ProductResponse>> GetById(Guid id, CancellationToken ct)
     {
-        var product = await productRepository.GetByIdAsync(id, ct);
-        if (product is null)
-            throw new ResourceNotFoundException("Producto", id);
-
+        var product = await getProductByIdUseCase.ExecuteAsync(id, ct);
         return Ok(ProductMapper.ToResponse(product));
     }
 
@@ -53,14 +52,7 @@ public class ProductsController(IProductRepository productRepository, ICategoryR
     [HttpPost]
     public async Task<ActionResult<ProductResponse>> Create([FromBody] NewProductRequest request, CancellationToken ct)
     {
-        var category = await categoryRepository.GetByIdAsync(request.CategoryId, ct);
-        if (category is null)
-            throw new ResourceNotFoundException("Categoría", request.CategoryId);
-
-        var product = Product.New(request.Name, request.Description, request.Price, request.Stock, request.CategoryId);
-        await productRepository.AddAsync(product, ct);
-        product = await productRepository.GetByIdAsync(product.Id, ct) ?? product;
-
+        var product = await createProductUseCase.ExecuteAsync(request.Name, request.Description, request.Price, request.Stock, request.CategoryId, ct);
         return CreatedAtAction(nameof(GetById), new { id = product.Id }, ProductMapper.ToResponse(product));
     }
 
@@ -68,16 +60,7 @@ public class ProductsController(IProductRepository productRepository, ICategoryR
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] EditProductRequest request, CancellationToken ct)
     {
-        var product = await productRepository.GetByIdAsync(id, ct);
-        if (product is null)
-            throw new ResourceNotFoundException("Producto", id);
-
-        var category = await categoryRepository.GetByIdAsync(request.CategoryId, ct);
-        if (category is null)
-            throw new ResourceNotFoundException("Categoría", request.CategoryId);
-
-        product.Edit(request.Name, request.Description, request.Price, request.Stock, request.CategoryId);
-        await productRepository.UpdateAsync(product, ct);
+        await updateProductUseCase.ExecuteAsync(id, request.Name, request.Description, request.Price, request.Stock, request.CategoryId, ct);
         return NoContent();
     }
 
@@ -85,11 +68,7 @@ public class ProductsController(IProductRepository productRepository, ICategoryR
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
-        var product = await productRepository.GetByIdAsync(id, ct);
-        if (product is null)
-            throw new ResourceNotFoundException("Producto", id);
-
-        await productRepository.DeleteAsync(id, ct);
+        await deleteProductUseCase.ExecuteAsync(id, ct);
         return NoContent();
     }
 }

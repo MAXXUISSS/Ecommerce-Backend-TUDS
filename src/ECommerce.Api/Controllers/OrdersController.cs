@@ -1,9 +1,7 @@
 using System.Security.Claims;
 using ECommerce.Api.DTOs;
 using ECommerce.Api.Mappers;
-using ECommerce.Application.Interfaces;
 using ECommerce.Application.UseCases.Orders;
-using ECommerce.Domain.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +10,10 @@ namespace ECommerce.Api.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class OrdersController(PlaceOrderUseCase placeOrderUseCase, IOrderRepository orderRepository) : ControllerBase
+public class OrdersController(
+    PlaceOrderUseCase placeOrderUseCase,
+    GetOrdersByUserUseCase getOrdersByUserUseCase,
+    GetOrderByIdUseCase getOrderByIdUseCase) : ControllerBase
 {
     [HttpPost]
     public async Task<ActionResult<OrderResponse>> Place([FromBody] PlaceOrderRequest request, CancellationToken ct)
@@ -30,21 +31,16 @@ public class OrdersController(PlaceOrderUseCase placeOrderUseCase, IOrderReposit
     public async Task<ActionResult<IEnumerable<OrderResponse>>> GetMine(CancellationToken ct)
     {
         var userId = GetCurrentUserId();
-        var orders = await orderRepository.GetByUserIdAsync(userId, ct);
+        var orders = await getOrdersByUserUseCase.ExecuteAsync(userId, ct);
         return Ok(orders.Select(OrderMapper.ToResponse));
     }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<OrderResponse>> GetById(Guid id, CancellationToken ct)
     {
-        var order = await orderRepository.GetByIdWithItemsAsync(id, ct);
-        if (order is null)
-            throw new ResourceNotFoundException("Orden", id);
-
         var userId = GetCurrentUserId();
-        if (!User.IsInRole("Admin") && order.UserId != userId)
-            return Forbid();
-
+        var isAdmin = User.IsInRole("Admin");
+        var order = await getOrderByIdUseCase.ExecuteAsync(id, userId, isAdmin, ct);
         return Ok(OrderMapper.ToResponse(order));
     }
 

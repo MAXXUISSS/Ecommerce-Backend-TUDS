@@ -18,6 +18,7 @@ public class OrderRepository : IOrderRepository
 
     public async Task<IEnumerable<Order>> GetByUserIdAsync(Guid userId, CancellationToken ct = default)
         => await _ctx.Orders
+            .Include(o => o.Items)
             .AsNoTracking()
             .Where(o => o.UserId == userId)
             .OrderByDescending(o => o.CreatedAt)
