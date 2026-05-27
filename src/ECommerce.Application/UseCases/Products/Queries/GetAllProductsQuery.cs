@@ -1,6 +1,6 @@
-using ECommerce.Application.CQRS;
 using ECommerce.Domain.Entities;
+using MediatR;
 
 namespace ECommerce.Application.UseCases.Products.Queries;
 
-public record GetAllProductsQuery() : IQuery<IEnumerable<Product>>;
+public record GetAllProductsQuery() : IRequest<IEnumerable<Product>>;

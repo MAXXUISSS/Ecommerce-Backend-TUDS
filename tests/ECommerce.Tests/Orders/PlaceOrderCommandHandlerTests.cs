@@ -19,7 +19,7 @@ public class PlaceOrderCommandHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_CreatesOrder_WhenValid()
+    public async Task Handle_CreatesOrder_WhenValid()
     {
         var userId = Guid.NewGuid();
         var productId = Guid.NewGuid();
@@ -34,7 +34,7 @@ public class PlaceOrderCommandHandlerTests
 
         var command = new PlaceOrderCommand(userId, [new OrderLine(productId, 2)]);
 
-        var result = await _handler.HandleAsync(command);
+        var result = await _handler.Handle(command, default);
 
         Assert.Equal(userId, result.UserId);
         Assert.Single(result.Items);
@@ -42,7 +42,7 @@ public class PlaceOrderCommandHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_ThrowsBusinessException_WhenNoLines()
+    public async Task Handle_ThrowsBusinessException_WhenNoLines()
     {
         var userId = Guid.NewGuid();
         var user = new User("cliente@test.com", "Cliente", "hash", "Customer");
@@ -50,17 +50,17 @@ public class PlaceOrderCommandHandlerTests
 
         var command = new PlaceOrderCommand(userId, []);
 
-        await Assert.ThrowsAsync<BusinessException>(() => _handler.HandleAsync(command));
+        await Assert.ThrowsAsync<BusinessException>(() => _handler.Handle(command, default));
     }
 
     [Fact]
-    public async Task HandleAsync_ThrowsResourceNotFoundException_WhenUserNotFound()
+    public async Task Handle_ThrowsNotFoundException_WhenUserNotFound()
     {
         var userId = Guid.NewGuid();
         _userRepoMock.Setup(r => r.GetByIdAsync(userId, default)).ReturnsAsync((User?)null);
 
         var command = new PlaceOrderCommand(userId, [new OrderLine(Guid.NewGuid(), 1)]);
 
-        await Assert.ThrowsAsync<ResourceNotFoundException>(() => _handler.HandleAsync(command));
+        await Assert.ThrowsAsync<NotFoundException>(() => _handler.Handle(command, default));
     }
 }

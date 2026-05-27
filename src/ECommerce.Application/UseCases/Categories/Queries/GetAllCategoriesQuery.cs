@@ -1,6 +1,6 @@
-using ECommerce.Application.CQRS;
 using ECommerce.Domain.Entities;
+using MediatR;
 
 namespace ECommerce.Application.UseCases.Categories.Queries;
 
-public record GetAllCategoriesQuery() : IQuery<IEnumerable<Category>>;
+public record GetAllCategoriesQuery() : IRequest<IEnumerable<Category>>;

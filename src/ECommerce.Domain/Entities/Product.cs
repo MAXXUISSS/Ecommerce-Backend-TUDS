@@ -71,7 +71,7 @@ public class Product
         if (quantity <= 0)
             throw new BusinessException("La cantidad debe ser mayor a cero.");
         if (quantity > Stock)
-            throw new OutOfStockException(quantity, Stock);
+            throw new InsufficientStockException(quantity, Stock);
         Stock -= quantity;
     }
 

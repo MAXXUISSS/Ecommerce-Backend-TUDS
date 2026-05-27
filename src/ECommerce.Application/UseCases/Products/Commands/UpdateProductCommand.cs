@@ -1,4 +1,4 @@
-using ECommerce.Application.CQRS;
+using MediatR;
 
 namespace ECommerce.Application.UseCases.Products.Commands;
 
@@ -8,4 +8,4 @@ public record UpdateProductCommand(
     string Description,
     decimal Price,
     int Stock,
-    Guid CategoryId) : ICommand;
+    Guid CategoryId) : IRequest<Unit>;

@@ -1,5 +1,5 @@
-using ECommerce.Application.CQRS;
 using ECommerce.Domain.Entities;
+using MediatR;
 
 namespace ECommerce.Application.UseCases.Products.Commands;
 
@@ -8,4 +8,4 @@ public record CreateProductCommand(
     string Description,
     decimal Price,
     int Stock,
-    Guid CategoryId) : ICommand<Product>;
+    Guid CategoryId) : IRequest<Product>;

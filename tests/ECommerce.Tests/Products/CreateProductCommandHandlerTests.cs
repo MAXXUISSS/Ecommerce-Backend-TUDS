@@ -18,7 +18,7 @@ public class CreateProductCommandHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_CreatesProduct_WhenCategoryExists()
+    public async Task Handle_CreatesProduct_WhenCategoryExists()
     {
         var categoryId = Guid.NewGuid();
         var category = new Category(categoryId, "Electrónica");
@@ -27,9 +27,9 @@ public class CreateProductCommandHandlerTests
         _categoryRepoMock.Setup(r => r.GetByIdAsync(categoryId, default)).ReturnsAsync(category);
         _productRepoMock.Setup(r => r.AddAsync(It.IsAny<Product>(), default)).Returns(Task.CompletedTask);
         _productRepoMock.Setup(r => r.GetByIdAsync(It.IsAny<Guid>(), default))
-            .ReturnsAsync((Guid id, CancellationToken _) => Product.New(command.Name, command.Description, command.Price, command.Stock, categoryId));
+            .ReturnsAsync(Product.New(command.Name, command.Description, command.Price, command.Stock, categoryId));
 
-        var result = await _handler.HandleAsync(command);
+        var result = await _handler.Handle(command, default);
 
         Assert.Equal("Laptop", result.Name);
         Assert.Equal(1500m, result.Price);
@@ -37,14 +37,14 @@ public class CreateProductCommandHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_ThrowsResourceNotFoundException_WhenCategoryNotFound()
+    public async Task Handle_ThrowsNotFoundException_WhenCategoryNotFound()
     {
         var categoryId = Guid.NewGuid();
         var command = new CreateProductCommand("Laptop", "Descripción", 1500m, 10, categoryId);
         _categoryRepoMock.Setup(r => r.GetByIdAsync(categoryId, default)).ReturnsAsync((Category?)null);
 
-        await Assert.ThrowsAsync<ResourceNotFoundException>(
-            () => _handler.HandleAsync(command));
+        await Assert.ThrowsAsync<NotFoundException>(
+            () => _handler.Handle(command, default));
 
         _productRepoMock.Verify(r => r.AddAsync(It.IsAny<Product>(), default), Times.Never);
     }

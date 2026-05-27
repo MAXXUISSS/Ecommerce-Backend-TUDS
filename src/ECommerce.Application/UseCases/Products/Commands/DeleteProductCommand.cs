@@ -1,5 +1,5 @@
-using ECommerce.Application.CQRS;
+using MediatR;
 
 namespace ECommerce.Application.UseCases.Products.Commands;
 
-public record DeleteProductCommand(Guid Id) : ICommand;
+public record DeleteProductCommand(Guid Id) : IRequest<Unit>;

@@ -16,7 +16,7 @@ public class GetAllProductsQueryHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_ReturnsAllProducts()
+    public async Task Handle_ReturnsAllProducts()
     {
         var products = new List<Product>
         {
@@ -25,17 +25,17 @@ public class GetAllProductsQueryHandlerTests
         };
         _repoMock.Setup(r => r.GetAllAsync(default)).ReturnsAsync(products);
 
-        var result = await _handler.HandleAsync(new GetAllProductsQuery());
+        var result = await _handler.Handle(new GetAllProductsQuery(), default);
 
         Assert.Equal(2, result.Count());
     }
 
     [Fact]
-    public async Task HandleAsync_ReturnsEmptyList_WhenNoProducts()
+    public async Task Handle_ReturnsEmptyList_WhenNoProducts()
     {
         _repoMock.Setup(r => r.GetAllAsync(default)).ReturnsAsync([]);
 
-        var result = await _handler.HandleAsync(new GetAllProductsQuery());
+        var result = await _handler.Handle(new GetAllProductsQuery(), default);
 
         Assert.Empty(result);
     }

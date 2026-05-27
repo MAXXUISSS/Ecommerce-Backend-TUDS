@@ -1,11 +1,8 @@
 using System.Text;
 using ECommerce.Api.Middleware;
-using ECommerce.Api.Validators;
 using ECommerce.Application;
 using ECommerce.Infrastructure;
 using ECommerce.Infrastructure.Persistence;
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
@@ -14,8 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
 builder.Services.AddControllers();
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<SignUpRequestValidator>();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(config);
@@ -39,6 +34,10 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
+builder.Services
+    .AddExceptionHandler<GlobalExceptionHandler>()
+    .AddProblemDetails();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -46,7 +45,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "ECommerce API",
         Version = "v1",
-        Description = "API REST de e-commerce con Clean Architecture, JWT, DTOs y validaciones."
+        Description = "API REST de e-commerce con Clean Architecture, CQRS, MediatR y JWT."
     });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -66,12 +65,11 @@ builder.Services.AddSwaggerGen(options =>
             []
         }
     });
-
 });
 
 var app = builder.Build();
 
-app.UseMiddleware<ApiExceptionHandler>();
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {

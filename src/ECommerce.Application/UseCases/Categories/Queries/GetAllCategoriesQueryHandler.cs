@@ -1,12 +1,12 @@
-using ECommerce.Application.CQRS;
 using ECommerce.Application.Interfaces;
 using ECommerce.Domain.Entities;
+using MediatR;
 
 namespace ECommerce.Application.UseCases.Categories.Queries;
 
 public class GetAllCategoriesQueryHandler(ICategoryRepository categoryRepository)
-    : IQueryHandler<GetAllCategoriesQuery, IEnumerable<Category>>
+    : IRequestHandler<GetAllCategoriesQuery, IEnumerable<Category>>
 {
-    public async Task<IEnumerable<Category>> HandleAsync(GetAllCategoriesQuery query, CancellationToken ct = default)
+    public async Task<IEnumerable<Category>> Handle(GetAllCategoriesQuery request, CancellationToken ct)
         => await categoryRepository.GetAllAsync(ct);
 }

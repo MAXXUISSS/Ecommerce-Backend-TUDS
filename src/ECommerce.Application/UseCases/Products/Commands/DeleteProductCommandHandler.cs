@@ -1,19 +1,20 @@
-using ECommerce.Application.CQRS;
 using ECommerce.Application.Interfaces;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Exceptions;
+using MediatR;
 
 namespace ECommerce.Application.UseCases.Products.Commands;
 
 public class DeleteProductCommandHandler(IProductRepository productRepository)
-    : ICommandHandler<DeleteProductCommand>
+    : IRequestHandler<DeleteProductCommand, Unit>
 {
-    public async Task HandleAsync(DeleteProductCommand command, CancellationToken ct = default)
+    public async Task<Unit> Handle(DeleteProductCommand request, CancellationToken ct)
     {
-        var product = await productRepository.GetByIdAsync(command.Id, ct);
+        var product = await productRepository.GetByIdAsync(request.Id, ct);
         if (product is null)
-            throw new ResourceNotFoundException(nameof(Product), command.Id);
+            throw new NotFoundException(nameof(Product), request.Id);
 
-        await productRepository.DeleteAsync(command.Id, ct);
+        await productRepository.DeleteAsync(request.Id, ct);
+        return Unit.Value;
     }
 }

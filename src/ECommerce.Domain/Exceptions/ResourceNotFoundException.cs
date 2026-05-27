@@ -1,9 +1,7 @@
 namespace ECommerce.Domain.Exceptions;
 
-public class ResourceNotFoundException : Exception
+public class NotFoundException : DomainException
 {
-    public ResourceNotFoundException(string resource, Guid id)
+    public NotFoundException(string resource, object id)
         : base($"{resource} con id '{id}' no fue encontrado.") { }
-
-    public ResourceNotFoundException(string message) : base(message) { }
 }

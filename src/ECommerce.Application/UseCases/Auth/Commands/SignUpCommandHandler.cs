@@ -1,20 +1,20 @@
-using ECommerce.Application.CQRS;
 using ECommerce.Application.Interfaces;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Exceptions;
+using MediatR;
 
 namespace ECommerce.Application.UseCases.Auth.Commands;
 
 public class SignUpCommandHandler(IUserRepository userRepository, IHashService hashService)
-    : ICommandHandler<SignUpCommand, User>
+    : IRequestHandler<SignUpCommand, User>
 {
-    public async Task<User> HandleAsync(SignUpCommand command, CancellationToken ct = default)
+    public async Task<User> Handle(SignUpCommand request, CancellationToken ct)
     {
-        if (await userRepository.ExistsByEmailAsync(command.Email, ct))
+        if (await userRepository.ExistsByEmailAsync(request.Email, ct))
             throw new BusinessException("Ya existe una cuenta registrada con ese email.");
 
-        var hash = hashService.ComputeHash(command.Password);
-        var user = new User(command.Email, command.Name, hash, "Customer");
+        var hash = hashService.ComputeHash(request.Password);
+        var user = new User(request.Email, request.Name, hash, "Customer");
         await userRepository.AddAsync(user, ct);
         return user;
     }

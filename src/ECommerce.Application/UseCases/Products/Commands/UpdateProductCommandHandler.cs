@@ -1,26 +1,28 @@
-using ECommerce.Application.CQRS;
 using ECommerce.Application.Interfaces;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Exceptions;
+using MediatR;
 
 namespace ECommerce.Application.UseCases.Products.Commands;
 
 public class UpdateProductCommandHandler(
     IProductRepository productRepository,
     ICategoryRepository categoryRepository)
-    : ICommandHandler<UpdateProductCommand>
+    : IRequestHandler<UpdateProductCommand, Unit>
 {
-    public async Task HandleAsync(UpdateProductCommand command, CancellationToken ct = default)
+    public async Task<Unit> Handle(UpdateProductCommand request, CancellationToken ct)
     {
-        var product = await productRepository.GetByIdAsync(command.Id, ct);
+        var product = await productRepository.GetByIdAsync(request.Id, ct);
         if (product is null)
-            throw new ResourceNotFoundException(nameof(Product), command.Id);
+            throw new NotFoundException(nameof(Product), request.Id);
 
-        var category = await categoryRepository.GetByIdAsync(command.CategoryId, ct);
+        var category = await categoryRepository.GetByIdAsync(request.CategoryId, ct);
         if (category is null)
-            throw new ResourceNotFoundException(nameof(Category), command.CategoryId);
+            throw new NotFoundException(nameof(Category), request.CategoryId);
 
-        product.Edit(command.Name, command.Description, command.Price, command.Stock, command.CategoryId);
+        product.Edit(request.Name, request.Description, request.Price, request.Stock, request.CategoryId);
         await productRepository.UpdateAsync(product, ct);
+
+        return Unit.Value;
     }
 }

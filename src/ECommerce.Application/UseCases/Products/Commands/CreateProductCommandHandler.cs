@@ -1,22 +1,22 @@
-using ECommerce.Application.CQRS;
 using ECommerce.Application.Interfaces;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Exceptions;
+using MediatR;
 
 namespace ECommerce.Application.UseCases.Products.Commands;
 
 public class CreateProductCommandHandler(
     IProductRepository productRepository,
     ICategoryRepository categoryRepository)
-    : ICommandHandler<CreateProductCommand, Product>
+    : IRequestHandler<CreateProductCommand, Product>
 {
-    public async Task<Product> HandleAsync(CreateProductCommand command, CancellationToken ct = default)
+    public async Task<Product> Handle(CreateProductCommand request, CancellationToken ct)
     {
-        var category = await categoryRepository.GetByIdAsync(command.CategoryId, ct);
+        var category = await categoryRepository.GetByIdAsync(request.CategoryId, ct);
         if (category is null)
-            throw new ResourceNotFoundException(nameof(Category), command.CategoryId);
+            throw new NotFoundException(nameof(Category), request.CategoryId);
 
-        var product = Product.New(command.Name, command.Description, command.Price, command.Stock, command.CategoryId);
+        var product = Product.New(request.Name, request.Description, request.Price, request.Stock, request.CategoryId);
         await productRepository.AddAsync(product, ct);
 
         return await productRepository.GetByIdAsync(product.Id, ct) ?? product;

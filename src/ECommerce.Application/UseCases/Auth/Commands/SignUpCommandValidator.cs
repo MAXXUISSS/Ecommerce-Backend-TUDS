@@ -1,11 +1,10 @@
-using ECommerce.Api.DTOs;
 using FluentValidation;
 
-namespace ECommerce.Api.Validators;
+namespace ECommerce.Application.UseCases.Auth.Commands;
 
-public class SignUpRequestValidator : AbstractValidator<SignUpRequest>
+public class SignUpCommandValidator : AbstractValidator<SignUpCommand>
 {
-    public SignUpRequestValidator()
+    public SignUpCommandValidator()
     {
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("El email es requerido.")
@@ -18,18 +17,5 @@ public class SignUpRequestValidator : AbstractValidator<SignUpRequest>
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("La contraseña es requerida.")
             .MinimumLength(6).WithMessage("La contraseña debe tener al menos 6 caracteres.");
-    }
-}
-
-public class SignInRequestValidator : AbstractValidator<SignInRequest>
-{
-    public SignInRequestValidator()
-    {
-        RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("El email es requerido.")
-            .EmailAddress().WithMessage("El formato del email no es válido.");
-
-        RuleFor(x => x.Password)
-            .NotEmpty().WithMessage("La contraseña es requerida.");
     }
 }

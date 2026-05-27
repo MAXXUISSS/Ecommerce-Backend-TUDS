@@ -1,20 +1,20 @@
-using ECommerce.Application.CQRS;
 using ECommerce.Application.Interfaces;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Exceptions;
+using MediatR;
 
 namespace ECommerce.Application.UseCases.Orders.Queries;
 
 public class GetOrderByIdQueryHandler(IOrderRepository orderRepository)
-    : IQueryHandler<GetOrderByIdQuery, Order>
+    : IRequestHandler<GetOrderByIdQuery, Order>
 {
-    public async Task<Order> HandleAsync(GetOrderByIdQuery query, CancellationToken ct = default)
+    public async Task<Order> Handle(GetOrderByIdQuery request, CancellationToken ct)
     {
-        var order = await orderRepository.GetByIdWithItemsAsync(query.OrderId, ct);
+        var order = await orderRepository.GetByIdWithItemsAsync(request.OrderId, ct);
         if (order is null)
-            throw new ResourceNotFoundException(nameof(Order), query.OrderId);
+            throw new NotFoundException(nameof(Order), request.OrderId);
 
-        if (!query.IsAdmin && order.UserId != query.RequestingUserId)
+        if (!request.IsAdmin && order.UserId != request.RequestingUserId)
             throw new UnauthorizedAccessException("No tienes permiso para ver esta orden.");
 
         return order;

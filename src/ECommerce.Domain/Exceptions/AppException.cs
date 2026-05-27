@@ -1,6 +1,6 @@
 namespace ECommerce.Domain.Exceptions;
 
-public abstract class AppException : Exception
+public abstract class DomainException : Exception
 {
-    protected AppException(string message) : base(message) { }
+    protected DomainException(string message) : base(message) { }
 }

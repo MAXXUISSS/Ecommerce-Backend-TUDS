@@ -1,7 +1,7 @@
 namespace ECommerce.Domain.Exceptions;
 
-public class OutOfStockException : AppException
+public class InsufficientStockException : DomainException
 {
-    public OutOfStockException(int requested, int available)
+    public InsufficientStockException(int requested, int available)
         : base($"Stock insuficiente: se solicitaron {requested} unidades pero solo hay {available} disponibles.") { }
 }

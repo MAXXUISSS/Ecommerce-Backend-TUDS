@@ -1,18 +1,18 @@
-using ECommerce.Application.CQRS;
 using ECommerce.Application.Interfaces;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Exceptions;
+using MediatR;
 
 namespace ECommerce.Application.UseCases.Categories.Queries;
 
 public class GetCategoryByIdQueryHandler(ICategoryRepository categoryRepository)
-    : IQueryHandler<GetCategoryByIdQuery, Category>
+    : IRequestHandler<GetCategoryByIdQuery, Category>
 {
-    public async Task<Category> HandleAsync(GetCategoryByIdQuery query, CancellationToken ct = default)
+    public async Task<Category> Handle(GetCategoryByIdQuery request, CancellationToken ct)
     {
-        var category = await categoryRepository.GetByIdAsync(query.Id, ct);
+        var category = await categoryRepository.GetByIdAsync(request.Id, ct);
         if (category is null)
-            throw new ResourceNotFoundException(nameof(Category), query.Id);
+            throw new NotFoundException(nameof(Category), request.Id);
 
         return category;
     }
